@@ -1,0 +1,35 @@
+ALGORITHM: Linear Support Vector Machine (SVM) Decision Boundary & Margin Visualization
+
+PROGRAM OBJECTIVE:
+Train a Linear Support Vector Classifier (SVC) for binary species classification on Fisher's Iris dataset, extract support vectors, and visualize the separating hyperplane with maximal margin boundaries.
+
+STEP 1: DATA PREPARATION & EXPLORATION
+    1.1. Load Fisher's Iris dataset via load_iris().
+    1.2. Convert into a pandas DataFrame containing feature names and species target strings.
+    1.3. Scatter plot Petal Length vs Petal Width grouped by species (Setosa, Versicolor, Virginica) to confirm linear separability of Setosa.
+    1.4. Formulate binary classification problem: Setosa (class 1) vs Non-Setosa (class 0).
+    1.5. Extract the two primary petal features: ['petal length (cm)', 'petal width (cm)'].
+    1.6. Split into training (80%) and testing (20%) sets using stratified sampling (random_state=42).
+    1.7. Standardize features using StandardScaler (fit on train, transform train and test).
+
+STEP 2: LINEAR SVM TRAINING
+    2.1. Instantiate SVC(kernel='linear', C=1.0).
+         - Solves primal quadratic optimization problem:
+           min (1/2) * ||w||^2 + C * sum(xi_i)
+           subject to y_i * (w^T * x_i + b) >= 1 - xi_i
+    2.2. Fit SVM model on scaled training data (X_tr_sc, y_tr).
+    2.3. Predict target classes on scaled test data (X_te_sc).
+
+STEP 3: EVALUATION
+    3.1. Compute Test Accuracy, Precision, Recall, and F1-Score.
+    3.2. Generate and print Confusion Matrix.
+
+STEP 4: DECISION BOUNDARY & MARGIN VISUALIZATION
+    4.1. Define plot_svm function that inverse-transforms coordinates back to original physical scale (cm).
+    4.2. Scatter original data points colored by class (Setosa vs Non-Setosa).
+    4.3. Construct a 2D dense coordinate meshgrid (XX, YY) spanning axis limits.
+    4.4. Evaluate SVM decision function Z = w^T * x + b across all mesh points.
+    4.5. Draw contour lines at levels:
+         - Z = 0 : Maximum-margin separating hyperplane (solid line).
+         - Z = -1, +1 : Margin gutters / boundary lines (dashed lines).
+    4.6. Extract support vectors (model.support_vectors_), inverse-transform to original scale, and highlight them with distinct circle markers.

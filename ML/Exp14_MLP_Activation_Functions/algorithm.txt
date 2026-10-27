@@ -1,0 +1,38 @@
+ALGORITHM: Impact of Activation Functions in Multi-Layer Perceptrons on MNIST
+
+PROGRAM OBJECTIVE:
+Compare the convergence behavior, training loss trajectory, and test classification accuracy of Logistic (Sigmoid), Hyperbolic Tangent (Tanh), and Rectified Linear Unit (ReLU) activation functions on MNIST digit recognition.
+
+STEP 1: LOAD & PREPROCESS MNIST
+    1.1. Fetch the full MNIST handwritten digits dataset (70,000 samples) via fetch_openml('mnist_784', version=1).
+    1.2. Normalize pixel intensity values to the range [0.0, 1.0] by dividing by 255.0.
+    1.3. Convert target labels to integer format.
+    1.4. Split into training (85%) and testing (15%) subsets with random_state=42.
+
+STEP 2: ACTIVATION FUNCTION EVALUATION LOOP
+    2.1. Define list of non-linear activations: activations = ['logistic', 'tanh', 'relu'].
+    2.2. Initialize history dictionaries for loss curves and test accuracies.
+    2.3. For each activation function act in activations:
+         a. Instantiate MLPClassifier:
+            - hidden_layer_sizes=(128, 64) [Two hidden layers: 128 units, 64 units]
+            - activation=act
+            - max_iter=25 [fixed epoch budget for direct convergence comparison]
+            - random_state=42
+         b. Fit network on training set (X_train, y_train).
+         c. Extract loss history: history_loss[act] = mlp.loss_curve_.
+         d. Predict on test set and record test accuracy: test_accuracies[act] = accuracy_score(y_test, y_pred).
+
+STEP 3: COMPARATIVE ANALYSIS
+    3.1. Logistic (Sigmoid):
+         f(z) = 1 / (1 + exp(-z))
+         Exhibits slower convergence due to vanishing gradients in saturated regions (derivatives near 0 for extreme z).
+    3.2. Hyperbolic Tangent (Tanh):
+         f(z) = (exp(z) - exp(-z)) / (exp(z) + exp(-z))
+         Zero-centered outputs accelerate gradient steps compared to sigmoid, but still susceptible to saturation.
+    3.3. Rectified Linear Unit (ReLU):
+         f(z) = max(0, z)
+         Constant gradient of 1 for positive activations eliminates vanishing gradients, enabling faster convergence and higher final accuracy.
+
+STEP 4: VISUALIZATION
+    4.1. Plot training loss convergence curves (Loss Value vs Epochs) for all three activation functions on a single figure.
+    4.2. Verify graphically that ReLU descends significantly faster and reaches lower objective loss within the 25-epoch constraint.

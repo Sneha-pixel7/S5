@@ -1,0 +1,32 @@
+ALGORITHM: Polynomial Regression and Bias-Variance Trade-Off Analysis
+
+PROGRAM OBJECTIVE:
+Analyze polynomial regression across varying model complexities (degrees 1 to 8) to model vehicle fuel efficiency (mpg) and observe underfitting vs overfitting.
+
+STEP 1: LOAD & PREPROCESS DATA
+    1.1. Load Auto MPG dataset from remote repository via pandas.
+    1.2. Drop rows containing missing values in 'displacement' or 'mpg'.
+    1.3. Extract feature matrix X ('displacement') and target vector y ('mpg').
+    1.4. Split into training (80%) and testing (20%) sets using random_state=42.
+
+STEP 2: POLYNOMIAL MODEL TRAINING LOOP
+    2.1. Define degrees to evaluate: degrees = [1, 2, 3, 4, 6, 8].
+    2.2. For each degree d in degrees:
+         a. Initialize PolynomialFeatures(degree=d, include_bias=False).
+         b. Fit and transform X_train into polynomial feature space:
+            phi(X) = [X, X^2, ..., X^d].
+         c. Transform X_test into identical polynomial feature space.
+         d. Fit an Ordinary Least Squares LinearRegression model on the transformed training features.
+         e. Predict target values on transformed test features.
+         f. Compute and log MSE, RMSE, and R^2 score.
+         g. Store the fitted transformer and model.
+
+STEP 3: EVALUATION & ANALYSIS
+    3.1. Degree 1 exhibits high bias (underfitting; linear assumption is too rigid).
+    3.2. Moderate degrees (2-4) provide optimal bias-variance balance and highest R^2.
+    3.3. Higher degrees (6-8) exhibit high variance (overfitting; fitting noise and oscillating at edges).
+
+STEP 4: VISUALIZATION
+    4.1. Generate dense continuous test points xs across the feature range.
+    4.2. Subplot 1 (Fitted Curves): Scatter actual test points and overlay polynomial curves for degrees 1, 2, 4, and 8.
+    4.3. Subplot 2 (Performance Curve): Plot R^2 score vs polynomial degree to clearly identify the peak generalization point.

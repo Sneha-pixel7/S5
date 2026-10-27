@@ -1,0 +1,42 @@
+ALGORITHM: Simple Linear Regression using Gradient Descent and Normal Equation
+
+PROGRAM OBJECTIVE:
+Implement simple linear regression to predict California housing prices using:
+1. Batch Gradient Descent (iterative optimization)
+2. Normal Equation (closed-form analytical solution)
+
+STEP 1: LOAD & PREPROCESS DATA
+    1.1. Fetch the California Housing dataset using fetch_california_housing().
+    1.2. Select the independent feature X ('AveRooms') and dependent target y ('MedHouseVal').
+    1.3. Filter outliers where AveRooms < 10 and MedHouseVal < 5.
+    1.4. Split data into training (80%) and testing (20%) sets with a fixed random seed (42).
+    1.5. Apply StandardScaler to normalize X_train and transform X_test:
+         z = (x - mean) / std
+
+STEP 2: BATCH GRADIENT DESCENT ALGORITHM
+    2.1. Initialize parameters theta0 = 0.0, theta1 = 0.0, learning rate lr = 0.01, epochs = 1000.
+    2.2. For each epoch from 1 to 1000:
+         a. Compute predicted values: y_pred = theta0 + theta1 * X_train
+         b. Compute error: error = y_pred - y_train
+         c. Update intercept: theta0 = theta0 - lr * mean(error)
+         d. Update slope: theta1 = theta1 - lr * mean(error * X_train)
+         e. Compute and store Mean Squared Cost: J = 0.5 * mean(error^2)
+    2.3. Return optimal parameters (theta0, theta1) and cost history.
+
+STEP 3: NORMAL EQUATION (CLOSED-FORM)
+    3.1. Augment feature matrix X_train with a bias column of ones: X_b = [1, X_train].
+    3.2. Compute optimal parameter vector theta analytically using the Moore-Penrose pseudo-inverse:
+         theta = inv(X_b^T * X_b) * X_b^T * y_train
+    3.3. Extract theta0 (intercept) and theta1 (slope).
+
+STEP 4: EVALUATION
+    4.1. For both Gradient Descent and Normal Equation:
+         a. Compute test set predictions: y_test_pred = theta0 + theta1 * X_test
+         b. Calculate Mean Squared Error: MSE = mean((y_test - y_test_pred)^2)
+         c. Calculate Root Mean Squared Error: RMSE = sqrt(MSE)
+         d. Calculate Coefficient of Determination: R^2 = 1 - (SS_res / SS_tot)
+    4.2. Print comparative performance metrics.
+
+STEP 5: VISUALIZATION
+    5.1. Plot GD Cost Convergence curve (Cost vs Epochs).
+    5.2. Plot regression lines for both methods against test scatter points.

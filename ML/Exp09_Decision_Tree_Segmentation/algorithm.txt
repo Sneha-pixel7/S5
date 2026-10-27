@@ -1,0 +1,39 @@
+ALGORITHM: Customer Segmentation using Decision Tree (ID3 / Information Gain)
+
+PROGRAM OBJECTIVE:
+Construct an interpretable Decision Tree classifier using Shannon Entropy (ID3 / Information Gain) on customer Recency, Frequency, and Monetary (RFM) tiers to predict customer loyalty segments.
+
+STEP 1: SYNTHETIC RFM DATA GENERATION
+    1.1. Set random seed = 42 for reproducible cohort generation.
+    1.2. Generate n = 800 synthetic customer records with three categorical features:
+         - Recency_Tier: ['Recent', 'Dormant', 'At-Risk'] with probabilities [0.5, 0.3, 0.2]
+         - Frequency_Tier: ['Low', 'Medium', 'High'] with probabilities [0.4, 0.4, 0.2]
+         - Monetary_Tier: ['Low', 'Medium', 'High'] with probabilities [0.3, 0.5, 0.2]
+    1.3. Assign target loyalty segment:
+         - Segment: ['Bronze', 'Silver', 'Gold'] with probabilities [0.4, 0.4, 0.2]
+
+STEP 2: ENCODING & SPLITTING
+    2.1. Convert ordinal categorical features into integer codes using .astype('category').cat.codes.
+    2.2. Map target classes to numerical labels: {'Bronze': 0, 'Silver': 1, 'Gold': 2}.
+    2.3. Separate feature matrix X and target vector y.
+    2.4. Split into 75% training and 25% testing sets using train_test_split (random_state=42).
+
+STEP 3: DECISION TREE FITTING WITH SHANNON ENTROPY
+    3.1. Initialize DecisionTreeClassifier:
+         - criterion='entropy': Information Gain split metric
+           H(S) = - sum(p_i * log2(p_i))
+           IG(S, A) = H(S) - sum(|S_v| / |S| * H(S_v))
+         - max_depth=3: Pre-pruning constraint to maintain visual interpretability and avoid overfitting.
+         - random_state=42.
+    3.2. Fit classifier on training data (X_train, y_train).
+    3.3. Predict customer segment on test data: y_pred = clf_tree.predict(X_test).
+    3.4. Evaluate and display classification accuracy.
+
+STEP 4: VISUALIZATION & FEATURE IMPORTANCE
+    4.1. Decision Tree Visualization:
+         - Render tree graph using plot_tree() with feature names, class names, filled node coloring, and rounded edges.
+         - Inspect root split, intermediate threshold rules, and leaf node class purities.
+    4.2. Feature Importance Analysis:
+         - Extract MDI (Mean Decrease in Impurity) feature importances from clf_tree.feature_importances_.
+         - Rank features by relative importance score.
+         - Plot bar chart of RFM feature importance breakdown.

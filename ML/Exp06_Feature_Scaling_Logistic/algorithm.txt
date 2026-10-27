@@ -1,0 +1,32 @@
+ALGORITHM: Impact of Feature Scaling on Gradient-Based Classification
+
+PROGRAM OBJECTIVE:
+Evaluate the effect of feature standardization (StandardScaler) on convergence stability, classification metrics, and parameter weights in Logistic Regression using the Pima Indians Diabetes dataset.
+
+STEP 1: LOAD & PREPROCESS DATA
+    1.1. Load Pima Indians Diabetes CSV dataset (8 medical predictors, 1 binary outcome).
+    1.2. Define column names: Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigree, Age, Outcome.
+    1.3. Split into predictors X (8 features) and binary target y ('Outcome').
+    1.4. Partition into training (70%) and testing (30%) subsets with random_state=42.
+
+STEP 2: MODEL TRAINING ON UNSTANDARDIZED (RAW) DATA
+    2.1. Train LogisticRegression with solver='saga', max_iter=1000 directly on raw X_train.
+    2.2. Due to disparity in feature scales (e.g., Insulin in 100s vs DiabetesPedigree < 1), gradient updates oscillate and struggle to converge.
+    2.3. Predict outcomes on unscaled X_test and record learned coefficients model_unscaled.coef_[0].
+
+STEP 3: FEATURE STANDARDIZATION & RETRAINING
+    3.1. Fit StandardScaler on X_train to compute mean mu and variance sigma^2 per feature:
+         x_scaled = (x - mu) / sigma
+    3.2. Transform X_train and X_test using fitted parameters.
+    3.3. Train LogisticRegression with identical hyperparameters (solver='saga', max_iter=1000) on standardized X_train_scaled.
+    3.4. Predict outcomes on standardized X_test_scaled and record learned coefficients model_scaled.coef_[0].
+
+STEP 4: COMPARATIVE METRIC CALCULATION
+    4.1. Compute Accuracy, Precision, Recall, and F1-Score for:
+         - Unscaled pipeline
+         - Scaled pipeline
+    4.2. Tabulate results in a summary DataFrame and display performance gains.
+
+STEP 5: VISUALIZATION
+    5.1. Plot side-by-side bar chart of learned weight coefficients for all 8 features.
+    5.2. Note that unscaled weights are distorted by raw magnitude, whereas standardized weights faithfully reflect genuine feature influence on the probability of diabetes.
