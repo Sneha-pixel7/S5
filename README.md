@@ -4,7 +4,7 @@ A curated and organized repository of 15 Machine Learning laboratory experiments
 
 Each experiment directory contains:
 - **Python Source Code (`expX.py`)**: End-to-end executable program including data loading, preprocessing, model implementation/training, evaluation metrics, and matplotlib visualizations.
-- **Algorithm Write-Up (`algorithm.txt`)**: A simplified, short, step-by-step academic algorithm formatted for lab manuals, study notes, and viva preparation.
+- **Algorithm Write-Up (`algorithm.md`)**: A simplified, short, step-by-step academic algorithm formatted for lab manuals, study notes, and viva preparation.
 
 ---
 
@@ -14,49 +14,49 @@ Each experiment directory contains:
 ML/
 ├── Exp01_Linear_Regression/
 │   ├── exp1.py                      # Batch Gradient Descent vs Normal Equation
-│   └── algorithm.txt                # Simplified algorithm write-up
+│   └── algorithm.md                # Simplified algorithm write-up
 ├── Exp02_Polynomial_Regression/
 │   ├── exp2.py                      # Polynomial regression & Bias-Variance tradeoff
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp03_Ridge_and_Lasso_Regression/
 │   ├── exp3.py                      # OLS vs Ridge (L2) vs Lasso (L1) with 5-fold CV
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp04_Logistic_Regression_Scratch/
 │   ├── exp4.py                      # Scratch Logistic Regression vs Scikit-Learn
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp05_MLE_vs_MAP/
 │   ├── exp5.py                      # MLE vs MAP with Gaussian (L2) & Laplace (L1) priors
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp06_Feature_Scaling_Logistic/
 │   ├── exp6.py                      # Impact of StandardScaler on logistic regression
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp07_Naive_Bayes_Text_Classification/
 │   ├── exp7.py                      # Multinomial NB (Frequency) vs Bernoulli NB (Binary)
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp08_KNN_Fashion_MNIST/
 │   ├── exp8.py                      # K-Nearest Neighbors hyperparameter tuning & latency
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp09_Decision_Tree_Segmentation/
 │   ├── exp9.py                      # Customer segmentation using Shannon Entropy / ID3
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp10_Logistic_Regression_vs_Decision_Tree/
 │   ├── exp10.py                     # Linear vs Tree-based model comparison on Census data
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp11_Linear_SVM_Decision_Boundary/
 │   ├── exp11.py                     # Linear SVM hyperplane, margin, and support vectors
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp12_SVM_Kernels_with_PCA/
 │   ├── exp12.py                     # Linear, Polynomial, and RBF kernels with PCA on Fashion-MNIST
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp13_MLP_Neural_Network_Architectures/
 │   ├── exp13.py                     # MLP depth and hidden layer size exploration on Wine Quality
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp14_MLP_Activation_Functions/
 │   ├── exp14.py                     # Sigmoid vs Tanh vs ReLU convergence on MNIST digits
-│   └── algorithm.txt
+│   └── algorithm.md
 ├── Exp15_MLP_Hyperparameter_Tuning/
 │   ├── exp15.py                     # Grid search on Learning Rate, Batch Size, and Epochs
-│   └── algorithm.txt
+│   └── algorithm.md
 └── requirements.txt
 ```
 
