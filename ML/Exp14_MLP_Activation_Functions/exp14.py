@@ -8,7 +8,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 
 print("Loading MNIST dataset...")
-mnist = fetch_openml("mnist_784", version=1, as_frame=False, parser="auto")
+try:
+    mnist = fetch_openml("mnist_784", version=1, as_frame=False, parser="auto")
+except TypeError:
+    # Workaround for Python 3.14 / Pandas 3+ bug in scikit-learn arff parser
+    mnist = fetch_openml("mnist_784", version=1, as_frame=False, parser="liac-arff")
 X, y = mnist.data / 255.0, mnist.target.astype(int)
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.15, random_state=42

@@ -7,7 +7,11 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 
-fashion_mnist = fetch_openml('Fashion-MNIST', version=1, as_frame=False, parser='auto')
+try:
+    fashion_mnist = fetch_openml('Fashion-MNIST', version=1, as_frame=False, parser='auto')
+except TypeError:
+    # Workaround for Python 3.14 / Pandas 3+ bug in scikit-learn arff parser
+    fashion_mnist = fetch_openml('Fashion-MNIST', version=1, as_frame=False, parser='liac-arff')
 X, y = fashion_mnist.data / 255.0, fashion_mnist.target.astype(int)
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.20, stratify=y, random_state=42
