@@ -1,38 +1,48 @@
-# Algorithm: Internet Slang Translator using Connectionless UDP Sockets
+# Algorithm: Client-Server Communication using UDP Socket Programming
 
 ## Server Algorithm
-1. **Initialize Dictionary & Socket**:
-   - Define a static lookup table pairing internet abbreviations with their formal English expansions:
-     `tbh` $\rightarrow$ "to be honest", `asap` $\rightarrow$ "as soon as possible", `idk` $\rightarrow$ "I do not know", etc.
-   - Create a connectionless datagram socket (`socket(AF_INET, SOCK_DGRAM, 0)`).
-   - Configure server address (`AF_INET`, `INADDR_ANY`, Port 8080) and bind using `bind()`.
+1. **Socket Creation**:
+   - Create a connectionless datagram socket using `socket(AF_INET, SOCK_DGRAM, 0)`.
+   - Validate the returned socket descriptor.
 
-2. **Receive & Tokenize**:
-   - Loop continuously awaiting datagrams via `recvfrom()`, capturing sender's `sockaddr_in`.
-   - Tokenize the received sentence word-by-word using delimiter characters (spaces, punctuation).
+2. **Address Binding**:
+   - Initialize the `sockaddr_in` structure for the server: set address family to `AF_INET`, port to `PORT` using `htons()`, and IP address to `INADDR_ANY`.
+   - Bind the datagram socket to the local address using `bind()`.
 
-3. **Translate**:
-   - For each extracted word:
-     - Perform case-insensitive comparison against dictionary abbreviations.
-     - If matched, append the formal expansion to an output buffer.
-     - If not matched, append the original word as-is.
-     - Preserve trailing punctuation (commas, periods, exclamation marks).
+3. **Receive & Process Loop**:
+   - Loop indefinitely to handle arriving client datagrams:
+     - Clear the input buffer.
+     - Block until a datagram arrives from any client using `recvfrom()`, capturing the sender's address structure (`cliaddr`) and address length (`len`).
+     - Null-terminate the received message and log the sender's IP and port (`inet_ntop()`, `ntohs()`).
+     - Analyze the message payload (e.g., compute character length, count vowels, convert to uppercase).
+     - Format the response string.
 
-4. **Respond**:
-   - Send the constructed formal sentence back to the client using `sendto()`.
+4. **Response Transmission**:
+   - Transmit the processed response back to the client's captured address using `sendto()`.
+
+5. **Shutdown**:
+   - Close the datagram socket with `close()` when stopping the server.
 
 ---
 
 ## Client Algorithm
-1. **Initialize Socket & Address**:
-   - Create a UDP datagram socket (`socket(AF_INET, SOCK_DGRAM, 0)`).
-   - Configure target server IP (`127.0.0.1`) and Port 8080.
+1. **Socket Creation**:
+   - Create a UDP datagram socket using `socket(AF_INET, SOCK_DGRAM, 0)`.
+   - Validate socket initialization.
 
-2. **Input & Transmit**:
-   - Prompt user to input an informal sentence containing slang (e.g., *"idk tbh I will call you asap"*).
-   - Send datagram directly to server using `sendto()` without connection handshake.
+2. **Server Address Specification**:
+   - Populate the server's `sockaddr_in` structure with family `AF_INET`, destination port `PORT` (`htons()`), and target IP (`"127.0.0.1"`) using `inet_pton()`.
 
-3. **Receive & Display**:
-   - Await response datagram from server using `recvfrom()`.
-   - Null-terminate the buffer and display the translated formal sentence.
-   - Close socket and exit.
+3. **Input & Transmission**:
+   - Prompt the user to enter a text message from standard input via `fgets()`.
+   - Strip newline characters and check message validity.
+   - Transmit the message directly in a single UDP datagram using `sendto()`, specifying the server's address structure. Note: No prior connection handshake is established.
+
+4. **Reception & Output**:
+   - Block and wait for the server's reply datagram using `recvfrom()`.
+   - Null-terminate the received byte stream.
+   - Display the response received from the server on the console.
+
+5. **Cleanup**:
+   - Close the client socket with `close()`.
+   - Terminate execution cleanly.

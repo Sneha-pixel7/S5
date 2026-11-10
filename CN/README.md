@@ -1,6 +1,6 @@
 # Computer Networks Laboratory (Semester 5)
 
-This repository contains the C socket programming experiments and Cisco Packet Tracer routing configurations for the Computer Networks Laboratory course.
+This repository contains C socket programming experiments and Cisco Packet Tracer routing configurations for the Computer Networks Laboratory course.
 
 ---
 
@@ -8,6 +8,24 @@ This repository contains the C socket programming experiments and Cisco Packet T
 
 ```text
 CN/
+├── tcp_client_server/
+│   ├── server.c                         # Interactive TCP echo and string transformation server
+│   ├── client.c                         # Client establishing TCP connection with interactive session
+│   ├── algorithm.md                     # Step-by-step connection-oriented TCP socket algorithm
+│   └── README.md                        # Plain-English explanation, compilation, and usage
+│
+├── udp_client_server/
+│   ├── server.c                         # Connectionless UDP datagram server with text analysis
+│   ├── client.c                         # Client transmitting UDP datagrams without handshake
+│   ├── algorithm.md                     # Datagram socket algorithm (sendto / recvfrom)
+│   └── README.md                        # Overview of connectionless communication and examples
+│
+├── concurrent_file_server/
+│   ├── server.c                         # Multi-client concurrent TCP file server using fork()
+│   ├── client.c                         # Client requesting and receiving files in chunks
+│   ├── algorithm.md                     # Concurrency, fork(), and signal handling algorithm
+│   └── README.md                        # Deep dive into process concurrency, PID verification, and usage
+│
 ├── conc_time_server/
 │   ├── server.c                         # Multi-client concurrent TCP file server using fork()
 │   ├── client.c                         # Client requesting file from server
@@ -42,7 +60,10 @@ CN/
 
 | Folder | Protocol | Architecture | Concept & Key Mechanism |
 | :--- | :--- | :--- | :--- |
-| [`conc_time_server`](file:///home/prawmathean/playground/S5/CN/conc_time_server) | TCP (`SOCK_STREAM`) | Multi-process (`fork()`) | Handles multiple simultaneous clients via child processes; streams requested files in binary chunks; avoids zombies with `SIGCHLD`. |
+| [`tcp_client_server`](file:///home/prawmathean/playground/S5/CN/tcp_client_server) | TCP (`SOCK_STREAM`) | Iterative Connection-Oriented | Establishes 3-way handshake; interactive bi-directional messaging session; analyzes, transforms, and reverses strings over reliable byte stream. |
+| [`udp_client_server`](file:///home/prawmathean/playground/S5/CN/udp_client_server) | UDP (`SOCK_DGRAM`) | Connectionless Datagram | Transmits independent datagrams using `sendto()`/`recvfrom()`; no connection handshake; processes text metrics without state overhead. |
+| [`concurrent_file_server`](file:///home/prawmathean/playground/S5/CN/concurrent_file_server) | TCP (`SOCK_STREAM`) | Multi-process (`fork()`) | Handles multiple simultaneous clients concurrently via child worker processes; reaps zombies via non-blocking `SIGCHLD` handler; streams files in chunks. |
+| [`conc_time_server`](file:///home/prawmathean/playground/S5/CN/conc_time_server) | TCP (`SOCK_STREAM`) | Multi-process (`fork()`) | Multi-client concurrent file server variant using `fork()` and `SIGCHLD` process reaping. |
 | [`tcp_matrix`](file:///home/prawmathean/playground/S5/CN/tcp_matrix) | TCP (`SOCK_STREAM`) | Iterative Client-Server | Client requests an $N \times N$ matrix; server generates and mathematically classifies it as Diagonal, Upper, Lower Triangular, or Ordinary. |
 | [`slang_explain`](file:///home/prawmathean/playground/S5/CN/slang_explain) | UDP (`SOCK_DGRAM`) | Connectionless Datagram | Transmits chat messages via `sendto()`/`recvfrom()`; server parses slang tokens (`tbh`, `idk`, `asap`) and returns formal English. |
 | [`packet_cap`](file:///home/prawmathean/playground/S5/CN/packet_cap) | Raw Socket (`SOCK_RAW`) | Packet Inspection | Captures raw Ethernet frames off network interface; decapsulates Ethernet, IPv4, TCP, and UDP headers. |

@@ -5,136 +5,97 @@
 #include <ctype.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
+#ifndef PORT
 #define PORT 8080
+#endif
 #define BUFFER_SIZE 2048
 
-// Structure to pair an abbreviation with its formal translation
-typedef struct {
-    const char *abbrev;
-    const char *formal;
-} SlangMap;
+// Analyze message: compute length, count vowels, and convert to uppercase
+void analyze_message(const char *input, char *upper_output, size_t *char_count, int *vowel_count) {
+    size_t len = strlen(input);
+    *char_count = len;
+    *vowel_count = 0;
 
-// Dictionary mapping slang to formal English
-SlangMap dictionary[] = {
-    {"tbh", "to be honest"},
-    {"ig", "I guess"},
-    {"tbf", "to be fair"},
-    {"atm", "at the moment"},
-    {"irl", "in real life"},
-    {"lol", "laughing out loud"},
-    {"asap", "as soon as possible"},
-    {"omg", "oh my god"},
-    {"ttyl", "talk to you later"},
-    {"idk", "I do not know"},
-    {"nvm", "never mind"}
-};
-
-int dict_size = sizeof(dictionary) / sizeof(dictionary[0]);
-
-// Function to look up an abbreviation in the dictionary (case-insensitive)
-const char* lookup_slang(const char *word) {
-    char lower_word[128];
-    int i = 0;
-    
-    // Convert current word to lowercase for matching
-    while (word[i] && i < 127) {
-        lower_word[i] = tolower((unsigned char)word[i]);
-        i++;
-    }
-    lower_word[i] = '\0';
-
-    for (int j = 0; j < dict_size; j++) {
-        if (strcmp(lower_word, dictionary[j].abbrev) == 0) {
-            return dictionary[j].formal;
+    for (size_t i = 0; i < len; i++) {
+        char ch = input[i];
+        upper_output[i] = toupper((unsigned char)ch);
+        char lower = tolower((unsigned char)ch);
+        if (lower == 'a' || lower == 'e' || lower == 'i' || lower == 'o' || lower == 'u') {
+            (*vowel_count)++;
         }
     }
-    return NULL;
-}
-
-// Function to parse the sentence word by word and translate it
-void translate_sentence(const char *input, char *output) {
-    char temp_input[BUFFER_SIZE];
-    strcpy(temp_input, input);
-    
-    output[0] = '\0';
-    
-    // Tokenize text using whitespace and typical punctuation delimiters
-    char *delimiters = " \t\r\n,.!?;:";
-    char *word = strtok(temp_input, delimiters);
-    const char *current_pos = input;
-
-    while (word != NULL) {
-        // Find where this word originally starts in the input text to preserve leading punctuation/spaces
-        const char *word_ptr = strstr(current_pos, word);
-        
-        // Copy everything between the last processed position and the start of the current word
-        int gap = word_ptr - current_pos;
-        if (gap > 0) {
-            strncat(output, current_pos, gap);
-        }
-
-        // Check if the isolated word matches an abbreviation
-        const char *translation = lookup_slang(word);
-        if (translation != NULL) {
-            strcat(output, translation);
-        } else {
-            strcat(output, word); // Keep original word if no slang matches
-        }
-
-        // Move target index past the processed word
-        current_pos = word_ptr + strlen(word);
-        word = strtok(NULL, delimiters);
-    }
-    
-    // Copy any remaining trailing characters/punctuation
-    strcat(output, current_pos);
+    upper_output[len] = '\0';
 }
 
 int main() {
     int sockfd;
     char buffer[BUFFER_SIZE];
-    char translated[BUFFER_SIZE];
+    char upper_text[BUFFER_SIZE];
+    char response[BUFFER_SIZE * 2];
     struct sockaddr_in servaddr, cliaddr;
-    
-    // Creating UDP socket
+    socklen_t len;
+
+    // 1. Create UDP datagram socket
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
-    
+
+    // 2. Configure server address structure
     memset(&servaddr, 0, sizeof(servaddr));
     memset(&cliaddr, 0, sizeof(cliaddr));
-    
+
     servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = INADDR_ANY;
+    servaddr.sin_addr.s_addr = INADDR_ANY; // Bind to any available local interface
     servaddr.sin_port = htons(PORT);
-    
-    // Bind the socket with the server address
+
+    // 3. Bind socket to server IP and port
     if (bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
         perror("Bind failed");
         close(sockfd);
         exit(EXIT_FAILURE);
     }
-    
-    printf("UDP Translation Server running on port %d...\n", PORT);
-    
+
+    printf("UDP Server listening on port %d...\n", PORT);
+
+    // 4. Infinite loop to process datagrams
     while (1) {
-        socklen_t len = sizeof(cliaddr);
-        int n = recvfrom(sockfd, (char *)buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&cliaddr, &len);
+        len = sizeof(cliaddr);
+        memset(buffer, 0, sizeof(buffer));
+
+        // Block until a datagram arrives from any client
+        int n = recvfrom(sockfd, (char *)buffer, BUFFER_SIZE - 1, 0,
+                         (struct sockaddr *)&cliaddr, &len);
+        if (n < 0) {
+            perror("recvfrom failed");
+            continue;
+        }
         buffer[n] = '\0';
-        
-        printf("Received slang text: %s\n", buffer);
-        
-        // Perform slang to formal English translation
-        translate_sentence(buffer, translated);
-        
-        printf("Translated text: %s\n", translated);
-        
-        // Send formal sentence back to client
-        sendto(sockfd, (const char *)translated, strlen(translated), 0, (const struct sockaddr *)&cliaddr, len);
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+
+        char client_ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &cliaddr.sin_addr, client_ip, sizeof(client_ip));
+        printf("\n[Datagram Received] From %s:%d\n", client_ip, ntohs(cliaddr.sin_port));
+        printf("Client Message: \"%s\"\n", buffer);
+
+        // Process message
+        size_t char_count = 0;
+        int vowel_count = 0;
+        analyze_message(buffer, upper_text, &char_count, &vowel_count);
+
+        // Construct server response
+        snprintf(response, sizeof(response),
+                 "UDP-ACK [Length: %zu | Vowels: %d | Uppercase: \"%s\"]",
+                 char_count, vowel_count, upper_text);
+
+        // Send reply directly back to sender's address
+        sendto(sockfd, (const char *)response, strlen(response), 0,
+               (const struct sockaddr *)&cliaddr, len);
+        printf("Sent response back to %s:%d\n", client_ip, ntohs(cliaddr.sin_port));
     }
-    
+
     close(sockfd);
     return 0;
 }
