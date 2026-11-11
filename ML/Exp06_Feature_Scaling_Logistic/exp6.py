@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,7 +14,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv'
+data_path = Path(__file__).parent / 'pima-indians-diabetes.data.csv'
 columns = [
     'Pregnancies',
     'Glucose',
@@ -24,7 +26,11 @@ columns = [
     'Age',
     'Outcome',
 ]
-df = pd.read_csv(url, names=columns)
+if data_path.exists():
+  df = pd.read_csv(data_path, names=columns)
+else:
+  url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv'
+  df = pd.read_csv(url, names=columns)
 X, y = df.drop('Outcome', axis=1).values, df['Outcome'].values
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, random_state=42

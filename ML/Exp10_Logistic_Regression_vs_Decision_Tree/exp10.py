@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,7 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
-url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data'
+data_path = Path(__file__).parent / 'adult.data'
 columns = [
     'age',
     'workclass',
@@ -30,7 +32,11 @@ columns = [
     'country',
     'income',
 ]
-df = pd.read_csv(url, names=columns, skipinitialspace=True, na_values='?').dropna()
+if data_path.exists():
+  df = pd.read_csv(data_path, names=columns, skipinitialspace=True, na_values='?').dropna()
+else:
+  url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data'
+  df = pd.read_csv(url, names=columns, skipinitialspace=True, na_values='?').dropna()
 df['income'] = df['income'].apply(lambda x: 1 if '>50K' in x else 0)
 
 cat_cols = [

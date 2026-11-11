@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,8 +14,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 
-url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv'
-df = pd.read_csv(url, sep=';')
+data_path = Path(__file__).parent / 'winequality-red.csv'
+if data_path.exists():
+  df = pd.read_csv(data_path, sep=';')
+else:
+  url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv'
+  df = pd.read_csv(url, sep=';')
 print(df.head()), print(df['quality'].value_counts().sort_index())
 
 plt.figure(figsize=(7, 4))

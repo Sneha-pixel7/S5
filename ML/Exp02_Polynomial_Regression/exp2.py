@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -7,8 +9,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PolynomialFeatures
 
 # 1. Load & Preprocess Data
-url = 'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/mpg.csv'
-df = pd.read_csv(url).dropna(subset=['displacement', 'mpg'])
+data_path = Path(__file__).parent / 'mpg.csv'
+if data_path.exists():
+  df = pd.read_csv(data_path)
+else:
+  url = 'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/mpg.csv'
+  df = pd.read_csv(url)
+
+df = df.dropna(subset=['displacement', 'mpg'])
 X, y = df[['displacement']].values, df['mpg'].values
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
